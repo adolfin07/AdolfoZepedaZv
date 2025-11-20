@@ -96,3 +96,23 @@
 .mobile-link:hover {
     color: var(--red);
 }
+
+
+/*scroll edit*/
+
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: #111;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #e63946;
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #ff4d5a;
+}

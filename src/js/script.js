@@ -3,73 +3,88 @@ const mobileMenu = document.getElementById('mobile-menu');
 const menuOpenIcon = document.getElementById('menu-open');
 const menuCloseIcon = document.getElementById('menu-close');
 
-// Crear overlay dinámicamente
 let overlay = document.createElement('div');
 overlay.id = 'mobile-overlay';
-overlay.className = 'fixed inset-0 bg-black/50 hidden z-10';
+overlay.className = 'fixed inset-0 bg-black/50 hidden opacity-0 z-10 transition-opacity duration-500';
 document.body.appendChild(overlay);
 
-// Asegurar que el menú esté encima del overlay
-mobileMenu.classList.add('z-20', 'fixed', 'top-0', 'left-0', 'h-screen', 'w-64', 'bg-[var(--dark-blue)]', 'pt-20', 'px-6', 'flex', 'flex-col', 'space-y-6', 'transition-transform', 'duration-300', 'transform', '-translate-x-full');
+// Estado inicial del menú
+mobileMenu.classList.add(
+    'z-20', 'fixed', 'top-0', 'left-0', 'h-screen', 'w-64',
+    'bg-[var(--dark-blue)]', 'pt-20', 'px-6', 'flex', 'flex-col',
+    'space-y-6', 'transform', 'transition-transform', 'duration-500',
+    '-translate-x-full'
+);
 
-// Función para abrir menú
 function openMenu() {
-    mobileMenu.classList.remove('hidden', '-translate-x-full');
-    mobileMenu.classList.add('translate-x-0');
+    // Mostrar menú SIN animación todavía
+    mobileMenu.classList.remove('hidden');
+    overlay.classList.remove('hidden');
+
+    // Esperar un frame para que el navegador pinte el estado inicial
+    requestAnimationFrame(() => {
+        mobileMenu.classList.remove('-translate-x-full');
+        mobileMenu.classList.add('translate-x-0');
+
+        overlay.classList.add('opacity-100');
+    });
+
     menuOpenIcon.classList.add('hidden');
     menuCloseIcon.classList.remove('hidden');
-    overlay.classList.remove('hidden');
 }
 
-// Función para cerrar menú
 function closeMenu() {
     mobileMenu.classList.remove('translate-x-0');
     mobileMenu.classList.add('-translate-x-full');
+    overlay.classList.remove('opacity-100');
+
+    // Esperar la animación para ocultarlo 100%
     setTimeout(() => {
         mobileMenu.classList.add('hidden');
-    }, 300); // espera animación
+        overlay.classList.add('hidden');
+    }, 500);
+
     menuOpenIcon.classList.remove('hidden');
     menuCloseIcon.classList.add('hidden');
-    overlay.classList.add('hidden');
 }
 
-// Toggle menú al hacer clic en el botón
 menuBtn.addEventListener('click', () => {
-    if (mobileMenu.classList.contains('hidden') || mobileMenu.classList.contains('-translate-x-full')) {
+    if (
+        mobileMenu.classList.contains('hidden') ||
+        mobileMenu.classList.contains('-translate-x-full')
+    ) {
         openMenu();
     } else {
         closeMenu();
     }
 });
 
-// Cerrar menú al hacer clic en cualquier link
 mobileMenu.querySelectorAll('a').forEach(link => {
     link.addEventListener('click', closeMenu);
 });
 
-// Cerrar menú al hacer clic fuera (overlay)
 overlay.addEventListener('click', closeMenu);
 
-// Animación hover en proyecto
-const btn = document.getElementById("project-btn");
-const img = document.getElementById("project-img");
+const cards = document.querySelectorAll('.zoom-card');
 
-btn.addEventListener("mouseenter", () => {
-    img.classList.add("scale-105");
+cards.forEach(card => {
+    card.addEventListener('mouseenter', () => {
+        card.classList.add('scale-105');
+    });
+    card.addEventListener('mouseleave', () => {
+        card.classList.remove('scale-105');
+    });
 });
 
-btn.addEventListener("mouseleave", () => {
-    img.classList.remove("scale-105");
-});
-
-// Animaciones al hacer scroll
 document.addEventListener("DOMContentLoaded", () => {
     const items = document.querySelectorAll(".animate-on-scroll, .skill");
 
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
+
                 let delay = 0;
+
                 entry.target.classList.forEach(cls => {
                     if (cls.startsWith('delay-')) {
                         delay = parseInt(cls.replace('delay-', ''), 10);
